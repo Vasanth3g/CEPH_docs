@@ -1,0 +1,53 @@
+	ceph osd pool create cephfs_data 128
+ceph osd pool create cephfs_metadata 128
+ceph fs new cephfs cephfs_metadata cephfs_data
+ceph fs ls
+ceph mds stat
+sudo yum -y install ceph-fuse
+ssh cephuser@osd1 'sudo ceph-authtool -p /etc/ceph/ceph.client.admin.keyring' > ceph.key
+chmod 600 ceph.key
+sudo mkdir -p /mnt/cephfs
+sudo mount -t ceph mon1:6789:/ /mnt/cephfs -o name=admin,secretfile=ceph.key
+
+sudo mkdir -p /etc/ceph/
+sudo scp root@mon1:/etc/ceph/ceph.conf /etc/ceph/ceph.conf
+sudo scp root@mon1:/etc/ceph/ceph.client.admin.keyring /etc/ceph/ceph.client.admin.keyring
+sudo chmod 644 /etc/ceph/ceph.conf
+sudo chmod 644 /etc/ceph/ceph.client.admin.keyring
+sudo mkdir -p /mnt/fuse
+sudo ceph-fuse -m mon1:6789 /mnt/fuse
+
+sudo vim /etc/fstab
+mon1:6789:/     /mnt/cephfs     ceph        name=admin,secretkey=/home/cephuser/ceph.key,_netdev,noatime    0   0
+sudo mount -a
+sudo df -hT
+
+
+
+remove file system :
+
+ceph fs ls
+
+mds fail <gid/name/role>
+
+fs rm <filesystem name> [--yes-i-really-mean-it]
+
+352, 165 ,123
+
+
+
+
+
+ceph osd getcrushmap -o 
+
+crushtool -d {compiled-crushmap-filename} -o {decompiled-crushmap-filename}
+
+crushtool -c {decompiled-crushmap-filename} -o {compiled-crushmap-filename}
+
+ceph osd setcrushmap -i /tmp/crush.new
+
+[cephuser@ceph-admin cluster]$ ceph osd map ecpool object-A
+osdmap e1858 pool 'ecpool' (117) object 'object-A' -> pg 117.b301e3e8 (117.8) -> up ([7,6,5,4,0], p7) acting ([7,6,5,4,0], p7)
+
+
+ceph tell mon.\* injectargs '--mon-allow-pool-delete=true'

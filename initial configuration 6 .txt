@@ -1,0 +1,119 @@
+
+Installation on centos 6 
+vi /etc/yum.repos.d/ceph.repo
+
+yum install setuptool -y
+yum install system-config-network* -y
+yum install system-config-firewall* -y
+yum install system-config-securitylevel-tui -y
+yum install system-config-keyboard -y
+yum install ntsysv -y
+
+[ceph]
+name=Ceph packages for $basearch
+baseurl=http://download.ceph.com/rpm-hammer/el6/$basearch
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://download.ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-noarch]
+name=Ceph noarch packages
+baseurl=http://download.ceph.com/rpm-hammer/el6/noarch
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://download.ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-source]
+name=Ceph source packages
+baseurl=http://download.ceph.com/rpm-hammer/el6/SRPMS
+enabled=0
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://download.ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+yum update -y 
+
+useradd -d /home/cephuser -m cephuser
+passwd cephuser
+
+echo "cephuser ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/cephuser
+
+chmod 0440 /etc/sudoers.d/cephuser
+
+sed -i s'/Defaults requiretty/#Defaults requiretty'/g /etc/sudoers
+
+yum install -y ntp ntpdate ntp-doc
+
+ntpdate 0.us.pool.ntp.org
+
+hwclock --systohc
+
+systemctl enable ntpd.service
+
+systemctl start ntpd.service
+
+vi  /usr/lib/python2.6/site-packages/ceph_deploy/hosts/centos/install.py
+
+change url = 'http://ceph.com/rpm-{version}/{repo}/'.format(  to 'http://download.ceph.com/rpm-{version}/{repo}/'.format(
+
+yum install -y open-vm-tools
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+vim /etc/hosts
+192.168.1.182        ceph-admin
+192.168.1.181        mon1
+192.168.1.167       osd1
+192.168.1.175        osd2
+192.168.1.180       osd3
+192.168.1.144        client
+	
+	
+ssh-keygen
+
+vim ~/.ssh/config
+
+Host ceph-admin
+        Hostname ceph-admin
+        User cephuser
+ 
+Host mon1
+        Hostname mon1
+        User cephuser
+ 
+Host osd1
+        Hostname osd1
+        User cephuser
+ 
+Host osd2
+        Hostname osd2
+        User cephuser
+ 
+Host osd3
+        Hostname osd3
+        User cephuser
+ 
+Host client
+        Hostname client
+        User cephuser
+		
+		
+chmod 644 ~/.ssh/config
+
+ssh-keyscan osd1 osd2 osd3 mon1 client >> ~/.ssh/known_hosts
+ssh-copy-id osd1
+ssh-copy-id osd2
+ssh-copy-id osd3
+ssh-copy-id mon1
+ssh-copy-id client
+
+Disable Firewall 
+
+ fdisk -l /dev/sdb #check sdb devices 
+ sudo parted -s /dev/sdb mklabel gpt mkpart primary xfs 0% 100% #create XFS file system 
+ sudo mkfs.xfs /dev/sdb -f 

@@ -1,0 +1,71 @@
+1. Issue came on monitor would not work like ip changes , domain changes etc... It could  not have  back on original state
+
+2.the pid of the monitor it will lock on the jason file so once it done not  write again  the configuration :
+
+status for monitor: mon.mon1
+[mon1][DEBUG ] {
+[mon1][DEBUG ]   "election_epoch": 3, 
+[mon1][DEBUG ]   "extra_probe_peers": [], 
+[mon1][DEBUG ]   "monmap": {
+[mon1][DEBUG ]     "created": "2018-04-16 12:45:52.623882", 
+[mon1][DEBUG ]     "epoch": 1, 
+[mon1][DEBUG ]     "fsid": "6c38c1e0-b534-4d30-a6df-ebc570b33925", 
+[mon1][DEBUG ]     "modified": "2018-04-16 12:45:52.623882", 
+[mon1][DEBUG ]     "mons": [
+[mon1][DEBUG ]       {
+[mon1][DEBUG ]         "addr": "192.168.1.166:6789/0", 
+[mon1][DEBUG ]         "name": "mon1", 
+[mon1][DEBUG ]         "rank": 0
+[mon1][DEBUG ]       }
+[mon1][DEBUG ]     ]
+[mon1][DEBUG ]   }, 
+[mon1][DEBUG ]   "name": "mon1", 
+[mon1][DEBUG ]   "outside_quorum": [], 
+[mon1][DEBUG ]   "quorum": [
+[mon1][DEBUG ]     0
+[mon1][DEBUG ]   ], 
+[mon1][DEBUG ]   "rank": 0, 
+[mon1][DEBUG ]   "state": "leader", 
+[mon1][DEBUG ]   "sync_provider": []
+[mon1][DEBUG ] }
+ 
+3.hostname , ip and fsid has been writed based on ceph.conf file .again we deploy on mon node the  fsid has been changed so it will be write on jason file 
+
+4.cluster knows only the ip and fsid but we changed the fsid its not updated on osd nodes so the cluster not communicate the mon
+
+some methods to add or remove monitors :
+###add mon while running #########
+ssh {new-mon-host}
+sudo mkdir /var/lib/ceph/mon/ceph-{mon-id}
+
+mkdir {tmp}
+
+ceph auth get mon. -o {tmp}/{key-filename}
+
+ceph mon getmap -o {tmp}/{map-filename}
+
+sudo ceph-mon -i {mon-id} --mkfs --monmap {tmp}/{map-filename} --keyring {tmp}/{key-filename}
+
+ceph-mon -i {mon-id} --public-addr {ip:port} 
+
+#######remove mon while running ##########
+
+systemctl  stop mon.{mon-id}
+ceph mon remove {mon-id}
+
+Removing Monitors from an Unhealthy Cluster
+
+ceph-mon -i {mon-id} --extract-monmap {map-path}
+
+ceph-mon -i `hostname` --extract-monmap /tmp/monmap
+
+monmaptool {map-path} --rm {mon-id}
+
+ceph-mon -i {mon-id} --inject-monmap {map-path}
+
+
+
+Important
+
+Existing monitors are not supposed to change their IP addresses. 
+ 
