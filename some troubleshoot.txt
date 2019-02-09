@@ -1,0 +1,9 @@
+when OSDs  down then check the tree command "ceph osd tree" how much osd down then up all osds mannually
+just mount the "mount /dev/sdb/ /var/lib/ceph/ceph-$id" restart the "/usr/bin/systemctl restart ceph-osd$id" 
+
+
+ls /sys/class/scsi_host
+
+echo "- - -" > /sys/class/scsi_host/host1/scan
+
+fio --directory=/mnt/cephfuse --direct=1 --rw=randwrite --bs=4m --size=30G --numjobs=10 --runtime=60 --group_reporting --name=testfile --output=testing
