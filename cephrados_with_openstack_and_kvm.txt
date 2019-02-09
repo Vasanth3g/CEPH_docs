@@ -73,6 +73,7 @@ Testing  on block storage failure  :
 2.That virtual machines are creating a  OSDs  for our testing environment so the osds is no failure 
 3.Last day the machine is fails (i.e) machine is corrupted , it will create automatically a new disk , it has default configuration of the OS based on snapshot 
 4.Automatically cloned a new virtual machine with same disk 
+######################################################################################
 5.Creating a snapshot of the vms pool and list out.
 	rbd snap create rbd/vms@vmbakup
  	      
