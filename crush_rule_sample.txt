@@ -1,0 +1,112 @@
+Creating Sample Crush rule:
+[cephuser@ceph-admin cluster]$ ceph osd tree
+ID  CLASS WEIGHT  TYPE NAME         STATUS REWEIGHT PRI-AFF 
+ -1       0.51199 root default                              
+ -3       0.51199     rack rack1                            
+ -5       0.03799         host row1                         
+  0   hdd 0.01900             osd.0     up  1.00000 1.00000 
+  1   hdd 0.01900             osd.1     up  1.00000 1.00000 
+ -6       0.11499         host row2                         
+  2   hdd 0.01700             osd.2     up  1.00000 1.00000 
+  5   hdd 0.09799             osd.5     up  1.00000 1.00000 
+ -9       0.31699         host row3                         
+  7   hdd 0.26099             osd.7     up  1.00000 1.00000 
+  8   hdd 0.05600             osd.8     up  1.00000 1.00000 
+-11       0.03099         host row4                         
+  3   hdd 0.00999             osd.3     up  1.00000 1.00000 
+  4   hdd 0.02100             osd.4     up  1.00000 1.00000 
+-12       0.01099         host row5                         
+  6   hdd 0.01099             osd.6     up  1.00000 1.00000
+
+Below tree we are taken the first row of the osd tree, it means our data will stored this osds via pools 
+###########################################################################################################
+Now we are create a pool for first row with 256 pgs
+ceph osd pool create row1 256
+##########################################################################
+Next we create a new crush ruleset(manually)
+ceph osd getcrushmap –o newcompile1152018
+#################################################################################
+Decompile the compiled file 
+crushtool –d newcompile1152018 –o newdecompile1152018
+###############################################################################
+ Then edit the decompile file to add a new rule below format
+rule row1 {
+	id 1
+	type replicated
+	min_size 1
+	max_size 10
+	step take row1
+	step choose firstn 0 type osd
+	step emit
+}
+
+It means the replicated method are from 1 to 10 between values to be taken on row1 , that row1 under all osds are takened
+###########################################################################################################################
+Again modified decompile to change compiled file 
+crushtool –c  newdecompile1152018 –o newcompile
+###################################################################################################
+Then we are import the newcompile file to crushmap
+ceph osd setcrushmap  –i  newcompile
+##################################################################################################
+Now check the rule on map changes:
+ceph osd crush rule dump row1
+#####################################################################################################3
+[cephuser@ceph-admin cluster]$ ceph osd crush rule dump row1
+{
+    "rule_id": 1,
+    "rule_name": "row1",
+    "ruleset": 1,
+    "type": 1,
+    "min_size": 1,
+    "max_size": 10,
+    "steps": [
+        {
+            "op": "take",
+            "item": -5,
+            "item_name": "row1"
+        },
+        {
+            "op": "choose_firstn",
+            "num": 0,
+            "type": "osd"
+        },
+        {
+            "op": "emit"
+        }
+    ]
+}
+
+################################################################################
+Test Case:
+
+Next we are set the rule on created pool row1
+ceph osd pool set row1 crush_rule row1
+Then we are creating the file sysem to client side with MDS 
+ceph fs new cephfs metadata row1 
+Now We Mount the filesystem on client side
+sudo mkdir -p /mnt/fuse
+sudo ceph-fuse -m mon1:6789 /mnt/fuse 
+Here put the data on fuse mountpoint 
+scp  -r /ftp/tvn/SourceBackup/CHIPS  root@192.168.1.166:/mnt/fuse
+
+###########################################################################################
+Checking the data placement after completion 
+[cephuser@ceph-admin cluster]$ sh metadata.sh 
+Enter Pool name :row1
+0,1
+0,1
+0,1
+0,1
+0,1
+0,1
+0,1
+1,0
+1,0
+1,0
+0,1
+0,1
+
+Now the data is palced based on crush rule  to make only on  row1 osds only .
+
+############################################################################################33
+ 
