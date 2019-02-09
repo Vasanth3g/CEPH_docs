@@ -1,0 +1,88 @@
+How Data Is Stored In CEPH Cluster
+  
+                  
+•	Our data is placed on default  128 pgs and empty pools based on our default configuration  ,pools means placed data under placement group to an different osds.
+
+•	We are creating a cephfs_data Pool on ceph-admin node:
+# ceph osd dump | grep -i cephfs_data
+pool 1 'cephfs_data' rep size 2 min_size 1 crush_ruleset 0 object_hash rjenkins pg_num 128 pgp_num 128 last_change 4051 owner 0
+
+•	listing pools get output like :
+# ceph osd dump | grep -i cephfs_data
+pool 1 'cephfs_data' rep size 2 min_size 1 crush_ruleset 0 object_hash rjenkins pg_num 128 pgp_num 128 last_change 4051 owner 0
+
+•	Finding how many placement groups :
+# ceph osd dump | grep -i cephfs_data
+pool 1 'cephfs_data' rep size 2 min_size 1 crush_ruleset 0 object_hash rjenkins pg_num 128 pgp_num 128 last_change 4051 owner 0
+
+•	Cheking replication value :
+# ceph osd dump | grep -i cephfs_data
+pool 1 'cephfs_data’ rep size 2 min_size 1 crush_ruleset 0 object_hash rjenkins pg_num 128 pgp_num 128 last_change 4051 owner 0
+
+•	Changing replication value :
+# ceph osd pool set cephfs_data size 3
+set pool 1 size to 3
+# ceph osd dump | grep -i cephfs_data 
+#pool 1 ‘cephfs_data’ rep size 3 min_size 1 crush_ruleset 0 object_hash rjenkins pg_num 128 pgp_num 128 last_change 4054 owner 0
+•	Creating some object :
+# dd if=/dev/zero of=10000000012.00000118 bs=10M count=1
+1+0 records in
+1+0 records out
+10485760 bytes (10 MB) copied, 0.0222705 s, 471 MB/s
+
+•	Put object on cephfs_data pool
+# rados -p cephfs_data put 10000000012.0000011810000000012.00000118
+
+•	checking how many objects in pools 
+#rados -p cephfs_data ls | grep 10000000012.00000118
+10000000012.00000118
+
+•	Where stored data in pgs:
+# ceph osd map cephfs_data 10000000012.00000118
+osdmap e77 pool 'cephfs_data' (1) object '10000000012.00000118' -> pg 1.6d25eb7f (1.7f) -> up ([2], p2) acting ([2], p2)
+
+•	Osdmap e77 pool is a osd map version 
+
+•	Cephfs data is a pool name 
+
+•	10000000012.00000118 is an object 
+
+•	1 is a pool id and 1.7f is placement group id 
+
+•	Acting means data will be on 2nd osd only (if large number of osds data like acting [122,63,62] ,it means replicated  data on osd122,osd63 and osd62.
+
+
+•	Now checking that pg in osd2
+     
+
+
+
+•	Browse actual directory where the objects located 
+ 
+•	Checking the object in pg  directory :
+ 
+•	Each pool should have multiple Placement Groups . More the PG , better your cluster performance , more reliable your setup would be.
+•	A PG is spreaded on multiple OSD , that is  Objects are spreaded across OSD. The first OSD mapped to PG will be its primary OSD and the other ODS’s of same PG will be its secondary OSD.
+
+•	Calculation of how many PG  needed on the pools :
+	                                  (OSDs * 100)
+Total PGs       =             ------------
+                                       Replicas
+•	Checking mds stat and find how many osds applying in mds : 
+# ceph osd stat
+     osdmap e4055: 3 osds: 3 up, 3 in
+#
+•	Now applying the formula (3*100)/3 = 100, Now , round up this value to the next power of 2 , this will give you the number of PG you should have for a pool having replication size of 3 and total 154 OSD in entire cluster.
+         	2^6 = 64
+2^7 = 128 , so we taken the value of 128 of 3 osds 
+•	Next We are going to Analyzing how data recovering from complete node  Failure.
+
+
+
+
+
+
+  
+
+
+
