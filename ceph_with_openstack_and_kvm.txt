@@ -1,0 +1,81 @@
+Creating a simple Rados block devices:
+A block is a sequence of bytes (for example, a 512-byte block of data). Block-based storage interfaces are the most common way to store data with rotating media such as hard disks, CDs, floppy disks, and even traditional 9-track tape. The ubiquity of block device interfaces makes a virtual block device an ideal candidate to interact with a mass data storage system like Ceph.
+
+Ceph block devices are thin-provisioned, resizable and store data striped over multiple OSDs in a Ceph cluster. Ceph block devices leverage RADOS capabilities such as snapshotting, replication and consistency. Ceph’s RADOS Block Devices (RBD) interact with OSDs using kernel modules or the librbd library.
+################################################################ 
+Methods of RBD:
+1.API via reach the Object :
+
+Open stack is a opensource tool for Private Cloud Architecture , it means storage everything is backend for CEPH, it provides the three interfaces like compute , Network and Storage .It mostly   compute and Storage part to  occupy CEPH.  Open Stack directly access the CEPH storage via API and authentication provided both side key ring and keystone file.
+We are deployed the openstack but still have on issue on some API calls to communicate the ceph storage and some pools are created  some changes on configurations .
+Openstack login  Dashboard:  
+After Successful login dashboard :
+#####################################################################################################################
+List of features :
+1. Deploy server via Instance within  less than 5min (backend with CEPH for VMDK)
+2. Volumes are stored a files or other sources of instances 
+3.its create a snapshots , recovery and balancing so there is no single point failure 
+3.Network is communicate with different region of the routing , iptables ,subnet etc
+4.Swift is object store to store files to object like Simple storage service ( S3)
+#####################################################################################################################
+2.QEMU/KVM with RBD:
+It also provides the CEPH cluster to directly access via libvirt , for example Servers are deployed with Virtual machines  have occupy the storage of virtual disks if already disks on some path and it will be converted  that disk to  ceph block device , if’s not directly import the deployed template of OS disk in this Machines  
+We are try on this method of the Object creation , it will also some issue to communicate the host on the Ceph storage cluster pools
+##########################################################################################################################
+3.Mountpoint of Block device:
+This Method create a block device disk in ceph cluster then mount the disk on client side , that disk to use the virtual disk(VMDK) of block device storage . its work on all via ceph storage .that methods also there is no single point failure of servers once down automatically recovering .
+Creating  mountpoint of rbd  to run vms via block storage:
+Create a separate pool of rbd :
+ceph osd pool create rbd 128
+########################################################################################
+[cephuser@ceph-admin root]$ ceph osd lspools
+82 metadata,94 row1,96 .rgw.root,97 default.rgw.control,98 default.rgw.meta,99 default.rgw.log,100 default.rgw.buckets.index,101 default.rgw.buckets.data,117 ecpool,118 default.rgw.buckets.non-ec,124 rbd,
+Create a disk img of the rbd pool :
+qemu-img create -f rbd rbd:rbd/vms  40G
+List out the images :
+##################################################################
+[cephuser@ceph-admin root]$ rbd ls -l 
+NAME     SIZE PARENT FMT PROT LOCK 
+centos 10240M          2           
+vms    40960M          2           
+Note : centos is already created for my testing purpose 
+########################################################################
+Activate rbd with kernel Module :
+sudo modprobe rbd
+sudo rbd feature disable disk01 exclusive-lock object-map fast-diff deep-flatten
+Now, map the vms image to a block device via rbd kernel module:
+sudo rbd map vms
+rbd showmapped
+##############################################
+[root@client ~]# rbd showmapped 
+id pool image snap device    
+0  rbd  vms   -    /dev/rbd0 
+##############################################
+[root@client ~]#
+Formating XFS :
+sudo mkfs.xfs /dev/rbd0
+############################################################
+Now Create directory and mount the disk :
+sudo mkdir -p /mnt/myvms
+sudo mount /dev/rbd0 /mnt/myvms
+####################################################
+Next We are create the volume of vm on this mountpoint:
+qemu-img create -f raw /mnt/myvms/centos 9G
+############################################################
+Check the volume ( VMDK ) :
+[root@client myvms]# ls
+centos  centos-clone
+Now choose the rbd disk on KVM :
+ ###############################################################################################
+Now machine will created and running successfully with ceph block storage .
+Testing  on block storage failure  :
+1.Machine is running on minimum osds to working  fine VMs
+2.That virtual machines are creating a  OSDs  for our testing environment so the osds is no failure 
+3.Last day the machine is fails (i.e) machine is corrupted , it will create automatically a new disk , it has default configuration of the OS based on snapshot 
+4.Automatically cloned a new virtual machine with same disk 
+5.Creating a snapshot of the vms pool and list out.
+	rbd snap create rbd/vms@vmbakup
+ 	      
+ 	
+  
+
