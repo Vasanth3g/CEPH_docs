@@ -1,0 +1,57 @@
+Monitor Configuration:
+
+ssh {hostname}
+
+ls /etc/ceph
+
+sudo vim /etc/ceph/ceph.conf
+
+uuidgen 
+
+fsid = {UUID}  ##add fsid in ceph.conf 
+
+mon initial members = {hostname}[,{hostname}]
+
+mon host = {ip-address}[,{ip-address}]
+
+ceph-authtool --create-keyring /tmp/ceph.mon.keyring --gen-key -n mon. --cap mon 'allow *' ## generate keyring 
+
+ceph-authtool --create-keyring /etc/ceph/ceph.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow' ##admin keyring
+
+ceph-authtool /tmp/ceph.mon.keyring --import-keyring /etc/ceph/ceph.client.admin.keyring ##Add the client.admin key to the ceph.mon.keyring.
+
+monmaptool --create --add {hostname} {ip-address} --fsid {uuid} /tmp/monmap ##creating monitor map 
+
+sudo mkdir /var/lib/ceph/mon/{cluster-name}-{hostname} ###creating default directory 
+
+ceph-mon [--cluster {cluster-name}] --mkfs -i {hostname} --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring ###populates the mon with the mon map and keyring 
+
+ceph.conf 
+
+[global]
+fsid = {cluster-id}
+mon initial members = {hostname}[, {hostname}]
+mon host = {ip-address}[, {ip-address}]
+public network = {network}[, {network}]
+cluster network = {network}[, {network}]
+auth cluster required = cephx
+auth service required = cephx
+auth client required = cephx
+osd journal size = {n}
+osd pool default size = {n}  # Write an object n times.
+osd pool default min size = {n} # Allow writing n copy in a degraded state.
+osd pool default pg num = {n}
+osd pool default pgp num = {n}
+osd crush chooseleaf type = {n}
+
+
+epel-release
+yum install yum-plugin-priorities
+yum install ceph-release
+libaio1 libsnappy1 libcurl3 curl libgoogle-perftools4 google-perftools libleveldb1
+yum install ceph*
+
+
+monmaptool --create --add mon1 192.168.1.70 --fsid 01c7a58b-5f32-4b04-9d34-8b33320d63ed /tmp/monmap
+ceph-mon --mkfs -i mon1 --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
+

@@ -1,0 +1,150 @@
+ceph osd pool create test 100 100 replicated crush-testing 0
+
+7b2cbe43-a70d-4b94-a5a5-c6fb0aeeadf5  osd2 
+
+28fa5545-6be5-48b8-9e70-6772130a74cb osd1 
+############################################pools and Pg ##################################################################
+ceph osd lspools
+
+ ceph osd pool create pool-A 128
+  ceph osd pool get pool-A pg_num
+   ceph osd dump | grep -i pool-A
+   ceph osd pool set pool-A size 3
+   ceph osd pool set pool-A size 3
+   dd if=/dev/zero of=object-A bs=10M count=1
+   rados -p pool-A put object-A  object-A
+   
+    rados -p pool-A put object-B  object-B
+	
+	rados -p pool-A ls
+	
+	ceph osd map pool-A object-A
+	
+
+
+
+rados -p {pool name}  ls | wc -l, rados -p {pool name}  ls | wc -l ##checking how many objects in pools 
+
+ceph osd pool create {pool-name} pg_num ##create pg 
+
+ceph osd pool set {pool-name} pg_num {pg_num} ## set pg number
+
+ceph osd pool set {pool-name} pgp_num {pgp_num} ##set  pgp number 
+
+ceph osd pool get {pool-name} pg_num ## get pg details 
+
+ceph pg dump [--format {format}] ##pg details 
+
+ceph pg dump_stuck inactive|unclean|stale|undersized|degraded [--format <format>] [-t|--threshold <seconds>] ###stucks pg stats 
+
+ceph pg map {pg-id} ## find map of particular pg 
+
+ceph pg {pg-id} query ###statistics on pg 
+
+ceph pg scrub {pg-id} ### Scrub a pg 
+
+ceph pg force-recovery {pg-id} [{pg-id #2}] [{pg-id #3} ...]
+ceph pg force-backfill {pg-id} [{pg-id #2}] [{pg-id #3} ...]  #####recovery/backfill of pg 
+
+ceph pg cancel-force-recovery {pg-id} [{pg-id #2}] [{pg-id #3} ...]
+ceph pg cancel-force-backfill {pg-id} [{pg-id #2}] [{pg-id #3} ...] ###cancel recovery/backfill of pg 
+
+
+ceph pg {pg-id} mark_unfound_lost revert|delete ### it revert or delete object on particular pg 
+
+##############################################CRUSH #################################################################
+
+root=default row=a rack=a2 chassis=a2a host=a2a1 ###crush location format 
+
+osd crush update on start = false ###set value of ceph.conf file 
+
+crush location hook = /path/to/customized-ceph-crush-location ###wrote on location path to specify the ceph.conf file 
+
+--cluster CLUSTER --id ID --type TYPE ###hook is passed several parameters default cluster as ceph , id as osd number , type as osd or mds
+
+
+############################################CRUSH structure ################################################################
+
+ceph osd crush tree ##list of tree and sub tree on osds 
+
+ceph osd crush rule ls , ceph osd crush rule dump #########rules of crush 
+
+ceph osd crush set-device-class <class> <osd-name> [...]
+
+ceph osd crush rm-device-class <osd-name> [...] ################set Class of the crush like hdd or sdd  , once the device class is set ,it cannot be changed to another class until the old class is unset with 
+
+ceph osd crush rule create-replicated <rule-name> <root> <failure-domain> <class> ###placement rule that targets on specific device classes 
+
+ceph osd pool set <pool-name> crush_rule <rule-name> ###pool can be changed to use the new rule
+
+ceph osd crush set {name} {weight} root={root} [{bucket-type}={bucket-name} ...] ###add or modify the crush maps in osds 
+
+example:
+name = osd.0
+
+weight = 2.0 ( default 1.0)
+
+root = default 
+
+bucket-type = datacenter=dc1 room=room1 row=foo rack=bar host=foo-bar-1
+
+ceph osd crush set osd.0 1.0 root=default datacenter=dc1 room=room1 row=foo rack=bar host=foo-bar-1 ##ex syntax of crush map set 
+
+ceph osd crush reweight {name} {weight} ###adjust osd weight in crush 
+
+ceph osd crush remove {name} ###remove  osd  in crush
+
+ceph osd crush add-bucket {bucket-name} {bucket-type} ##add a bucket 
+
+bucket-name = rack12
+
+bucket-type = rack 
+
+ceph osd crush add-bucket rack12 rack ## ex syntax 
+
+ceph osd crush move {bucket-name} {bucket-type}={bucket-name}, [...] ### move a bucket 
+
+ceph osd crush remove {bucket-name} ### remove a bucket , Note:A bucket must be empty before removing it from the CRUSH hierarchy.  
+
+ceph osd crush remove rack12 ## removing bucket hierarchy 
+
+###compat weight :
+ceph osd crush weight-set create-compat
+
+ceph osd crush weight-set reweight-compat {name} {weight} ###compat weight can be adjusted 
+
+ceph osd crush weight-set rm-compat ### compat weight set destroy 
+
+##per pools weight sets 
+
+ceph osd crush weight-set create {pool-name} {mode} ## mode = flat or positional ..refer doc http://docs.ceph.com/docs/master/rados/operations/crush-map/
+
+ceph osd crush weight-set reweight {pool-name} {item-name} {weight [...]} ### adjust weight an item-name
+
+ceph osd crush weight-set ls ##existing weight sets
+
+ceph osd crush weight-set rm {pool-name} ###remove weight sets 
+
+ceph osd crush rule create-replicated {name} {root} {failure-domain-type} [{class}] ##creating rule for replicated pool
+
+ceph osd erasure-code-profile ls ###creating rule for erasure coding 
+
+ceph osd erasure-code-profile get {profile-name} ## existing profile viewed on erasure coded
+
+ceph osd crush rule create-erasure {name} {profile-name} ## once profile is defined ,you can create crush rule with 
+
+ceph osd crush rule rm {rule-name} ## deleting rule 
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
