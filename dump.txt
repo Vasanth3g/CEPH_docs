@@ -1,0 +1,558 @@
+{
+    "devices": [
+        {
+            "id": 0,
+            "name": "osd.0",
+            "class": "hdd"
+        },
+        {
+            "id": 1,
+            "name": "osd.1",
+            "class": "hdd"
+        },
+        {
+            "id": 2,
+            "name": "osd.2",
+            "class": "hdd"
+        },
+        {
+            "id": 3,
+            "name": "osd.3",
+            "class": "hdd"
+        },
+        {
+            "id": 4,
+            "name": "osd.4",
+            "class": "hdd"
+        },
+        {
+            "id": 5,
+            "name": "osd.5",
+            "class": "hdd"
+        },
+        {
+            "id": 6,
+            "name": "osd.6",
+            "class": "hdd"
+        },
+        {
+            "id": 7,
+            "name": "osd.7",
+            "class": "hdd"
+        },
+        {
+            "id": 8,
+            "name": "osd.8",
+            "class": "hdd"
+        }
+    ],
+    "types": [
+        {
+            "type_id": 0,
+            "name": "osd"
+        },
+        {
+            "type_id": 1,
+            "name": "host"
+        },
+        {
+            "type_id": 2,
+            "name": "chassis"
+        },
+        {
+            "type_id": 3,
+            "name": "rack"
+        },
+        {
+            "type_id": 4,
+            "name": "row"
+        },
+        {
+            "type_id": 5,
+            "name": "pdu"
+        },
+        {
+            "type_id": 6,
+            "name": "pod"
+        },
+        {
+            "type_id": 7,
+            "name": "room"
+        },
+        {
+            "type_id": 8,
+            "name": "datacenter"
+        },
+        {
+            "type_id": 9,
+            "name": "region"
+        },
+        {
+            "type_id": 10,
+            "name": "root"
+        }
+    ],
+    "buckets": [
+        {
+            "id": -1,
+            "name": "default",
+            "type_id": 10,
+            "type_name": "root",
+            "weight": 33554,
+            "alg": "straw2",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": -3,
+                    "weight": 33554,
+                    "pos": 0
+                }
+            ]
+        },
+        {
+            "id": -2,
+            "name": "row1~hdd",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 2490,
+            "alg": "straw",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 0,
+                    "weight": 1245,
+                    "pos": 0
+                },
+                {
+                    "id": 1,
+                    "weight": 1245,
+                    "pos": 1
+                }
+            ]
+        },
+        {
+            "id": -3,
+            "name": "rack1",
+            "type_id": 3,
+            "type_name": "rack",
+            "weight": 33551,
+            "alg": "straw",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": -5,
+                    "weight": 2490,
+                    "pos": 0
+                },
+                {
+                    "id": -6,
+                    "weight": 7536,
+                    "pos": 1
+                },
+                {
+                    "id": -9,
+                    "weight": 20774,
+                    "pos": 2
+                },
+                {
+                    "id": -11,
+                    "weight": 2031,
+                    "pos": 3
+                },
+                {
+                    "id": -12,
+                    "weight": 720,
+                    "pos": 4
+                }
+            ]
+        },
+        {
+            "id": -4,
+            "name": "default~hdd",
+            "type_id": 10,
+            "type_name": "root",
+            "weight": 33551,
+            "alg": "straw2",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": -8,
+                    "weight": 33551,
+                    "pos": 0
+                }
+            ]
+        },
+        {
+            "id": -5,
+            "name": "row1",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 2490,
+            "alg": "straw",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 0,
+                    "weight": 1245,
+                    "pos": 0
+                },
+                {
+                    "id": 1,
+                    "weight": 1245,
+                    "pos": 1
+                }
+            ]
+        },
+        {
+            "id": -6,
+            "name": "row2",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 7536,
+            "alg": "straw",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 2,
+                    "weight": 1114,
+                    "pos": 0
+                },
+                {
+                    "id": 5,
+                    "weight": 6422,
+                    "pos": 1
+                }
+            ]
+        },
+        {
+            "id": -7,
+            "name": "row2~hdd",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 7536,
+            "alg": "straw",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 2,
+                    "weight": 1114,
+                    "pos": 0
+                },
+                {
+                    "id": 5,
+                    "weight": 6422,
+                    "pos": 1
+                }
+            ]
+        },
+        {
+            "id": -8,
+            "name": "rack1~hdd",
+            "type_id": 3,
+            "type_name": "rack",
+            "weight": 33551,
+            "alg": "straw",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": -2,
+                    "weight": 2490,
+                    "pos": 0
+                },
+                {
+                    "id": -7,
+                    "weight": 7536,
+                    "pos": 1
+                },
+                {
+                    "id": -10,
+                    "weight": 20774,
+                    "pos": 2
+                },
+                {
+                    "id": -14,
+                    "weight": 2031,
+                    "pos": 3
+                },
+                {
+                    "id": -13,
+                    "weight": 720,
+                    "pos": 4
+                }
+            ]
+        },
+        {
+            "id": -9,
+            "name": "row3",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 20774,
+            "alg": "straw2",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 7,
+                    "weight": 17104,
+                    "pos": 0
+                },
+                {
+                    "id": 8,
+                    "weight": 3670,
+                    "pos": 1
+                }
+            ]
+        },
+        {
+            "id": -10,
+            "name": "row3~hdd",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 20774,
+            "alg": "straw2",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 7,
+                    "weight": 17104,
+                    "pos": 0
+                },
+                {
+                    "id": 8,
+                    "weight": 3670,
+                    "pos": 1
+                }
+            ]
+        },
+        {
+            "id": -11,
+            "name": "row4",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 2031,
+            "alg": "straw2",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 3,
+                    "weight": 655,
+                    "pos": 0
+                },
+                {
+                    "id": 4,
+                    "weight": 1376,
+                    "pos": 1
+                }
+            ]
+        },
+        {
+            "id": -12,
+            "name": "row5",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 720,
+            "alg": "straw2",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 6,
+                    "weight": 720,
+                    "pos": 0
+                }
+            ]
+        },
+        {
+            "id": -13,
+            "name": "row5~hdd",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 720,
+            "alg": "straw2",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 6,
+                    "weight": 720,
+                    "pos": 0
+                }
+            ]
+        },
+        {
+            "id": -14,
+            "name": "row4~hdd",
+            "type_id": 1,
+            "type_name": "host",
+            "weight": 2031,
+            "alg": "straw2",
+            "hash": "rjenkins1",
+            "items": [
+                {
+                    "id": 3,
+                    "weight": 655,
+                    "pos": 0
+                },
+                {
+                    "id": 4,
+                    "weight": 1376,
+                    "pos": 1
+                }
+            ]
+        }
+    ],
+    "rules": [
+        {
+            "rule_id": 0,
+            "rule_name": "replicated_rule",
+            "ruleset": 0,
+            "type": 1,
+            "min_size": 1,
+            "max_size": 3,
+            "steps": [
+                {
+                    "op": "take",
+                    "item": -1,
+                    "item_name": "default"
+                },
+                {
+                    "op": "chooseleaf_firstn",
+                    "num": 0,
+                    "type": "host"
+                },
+                {
+                    "op": "emit"
+                }
+            ]
+        },
+        {
+            "rule_id": 1,
+            "rule_name": "row1",
+            "ruleset": 1,
+            "type": 1,
+            "min_size": 1,
+            "max_size": 10,
+            "steps": [
+                {
+                    "op": "take",
+                    "item": -5,
+                    "item_name": "row1"
+                },
+                {
+                    "op": "choose_firstn",
+                    "num": 0,
+                    "type": "osd"
+                },
+                {
+                    "op": "emit"
+                }
+            ]
+        },
+        {
+            "rule_id": 2,
+            "rule_name": "row2",
+            "ruleset": 2,
+            "type": 1,
+            "min_size": 1,
+            "max_size": 10,
+            "steps": [
+                {
+                    "op": "take",
+                    "item": -6,
+                    "item_name": "row2"
+                },
+                {
+                    "op": "choose_firstn",
+                    "num": 0,
+                    "type": "osd"
+                },
+                {
+                    "op": "emit"
+                }
+            ]
+        },
+        {
+            "rule_id": 3,
+            "rule_name": "erasure-code",
+            "ruleset": 3,
+            "type": 3,
+            "min_size": 3,
+            "max_size": 3,
+            "steps": [
+                {
+                    "op": "set_chooseleaf_tries",
+                    "num": 5
+                },
+                {
+                    "op": "set_choose_tries",
+                    "num": 100
+                },
+                {
+                    "op": "take",
+                    "item": -1,
+                    "item_name": "default"
+                },
+                {
+                    "op": "chooseleaf_indep",
+                    "num": 0,
+                    "type": "host"
+                },
+                {
+                    "op": "emit"
+                }
+            ]
+        },
+        {
+            "rule_id": 4,
+            "rule_name": "ecpool",
+            "ruleset": 4,
+            "type": 3,
+            "min_size": 3,
+            "max_size": 6,
+            "steps": [
+                {
+                    "op": "set_chooseleaf_tries",
+                    "num": 5
+                },
+                {
+                    "op": "set_choose_tries",
+                    "num": 100
+                },
+                {
+                    "op": "take",
+                    "item": -1,
+                    "item_name": "default"
+                },
+                {
+                    "op": "chooseleaf_indep",
+                    "num": 0,
+                    "type": "host"
+                },
+                {
+                    "op": "emit"
+                }
+            ]
+        }
+    ],
+    "tunables": {
+        "choose_local_tries": 0,
+        "choose_local_fallback_tries": 0,
+        "choose_total_tries": 50,
+        "chooseleaf_descend_once": 1,
+        "chooseleaf_vary_r": 1,
+        "chooseleaf_stable": 1,
+        "straw_calc_version": 1,
+        "allowed_bucket_algs": 54,
+        "profile": "jewel",
+        "optimal_tunables": 1,
+        "legacy_tunables": 0,
+        "minimum_required_version": "jewel",
+        "require_feature_tunables": 1,
+        "require_feature_tunables2": 1,
+        "has_v2_rules": 1,
+        "require_feature_tunables3": 1,
+        "has_v3_rules": 0,
+        "has_v4_buckets": 1,
+        "require_feature_tunables5": 1,
+        "has_v5_rules": 0
+    },
+    "choose_args": {}
+}
+
